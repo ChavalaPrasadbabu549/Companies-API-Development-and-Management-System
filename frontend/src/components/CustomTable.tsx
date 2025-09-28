@@ -1,0 +1,97 @@
+import React from 'react'
+import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip } from '@mui/material'
+
+interface CustomTableProps {
+    columns: any[];
+    rows: any[];
+    rowsPerPageOptions?: number[];
+}
+
+const CustomTable: React.FC<CustomTableProps> = ({
+    columns,
+    rows,
+    rowsPerPageOptions = [5, 10, 25],
+}) => {
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(rowsPerPageOptions[0]);
+
+    const handleChangePage = (_: unknown, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+    return (
+        <>
+            <TableContainer component={Paper}>
+                <Table stickyHeader>
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((col, index) => (
+                                <TableCell
+                                    key={index}
+                                    sx={{ width: col.width, textAlign: col.textAlign }}
+                                >
+                                    {col.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                        {paginatedRows.length > 0 ? (
+                            paginatedRows.map((row, rowIndex) => (
+                                <TableRow key={rowIndex}>
+                                    {columns.map((col, colIndex) => (
+                                        <TableCell key={colIndex} sx={{ textAlign: col.textAlign }}>
+                                            {Array.isArray(row[col.field]) ? (
+                                                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                                                    {row[col.field].map((action: any, index: number) => (
+                                                        <Tooltip key={index} title={action.label}>
+                                                            <IconButton
+                                                                size="small"
+                                                                color={action.color as any}
+                                                                onClick={action.onClick}
+                                                            >
+                                                                {action.icon}
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    ))}
+                                                </Box>
+                                            ) : (
+                                                row[col.field]
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} align="center">
+                                    No data available
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+
+                <TablePagination
+                    component="div"
+                    count={rows.length}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    rowsPerPageOptions={rowsPerPageOptions}
+                />
+            </TableContainer>
+        </>
+    );
+};
+
+export default CustomTable;
