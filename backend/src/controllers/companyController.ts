@@ -195,21 +195,23 @@ export const companyUpdate = async (req: Request, res: Response) => {
 
 export const companyList = async (req: CustomRequest, res: Response) => {
     try {
-        const { pagination, sort } = req.query;
+        const pagination = req.query.pagination;
+        const sort = req.query.sort;
+        const filters = req.filters || {};
 
-        // Provide defaults if undefined
+        const sortField = sort?.field || "createdAt";
+        const sortOrder = sort?.order || -1;
         const page = pagination?.page || 1;
         const limit = pagination?.limit || 10;
         const skip = pagination?.skip || 0;
-        const sortField = sort?.field || "createdAt";
-        const sortOrder = sort?.order || -1;
 
-        const companies = await Company.find()
+        const companies = await Company.find(filters)
             .sort({ [sortField]: sortOrder })
             .skip(skip)
             .limit(limit);
 
-        const total = await Company.countDocuments();
+        const totalRecords = await Company.countDocuments(filters);
+        console.log({ filters, page, limit, skip, sortField, sortOrder });
 
         return res.status(200).json({
             code: 200,
@@ -217,10 +219,10 @@ export const companyList = async (req: CustomRequest, res: Response) => {
             message: "Companies fetched successfully",
             data: companies,
             pagination: {
-                total,
+                totalRecords,
                 page,
                 limit,
-                totalPages: Math.ceil(total / limit),
+                totalPages: Math.ceil(totalRecords / limit),
             },
         });
     } catch (error: any) {
