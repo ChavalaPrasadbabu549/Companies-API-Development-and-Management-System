@@ -1,24 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import CustomModal from '../CustomModal';
 import CustomButton from '../CustomButton';
-import type { Company } from '../../App';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import BasicInfo from './BasicInfo';
-import ContactInfo from './ContactInfo';
-import OperationalInfo from './OperationalInfo';
-import FinancialInfo from './FinancialInfo';
-import ComplianceInfo from './ComplianceInfo';
-import BrandingInfo from './BrandingInfo';
+import type { CompanyModalProps } from '../../types/Type';
+import { CircularProgress } from '@mui/material';
+const BasicInfo = React.lazy(() => import('./BasicInfo'));
+const ContactInfo = React.lazy(() => import('./ContactInfo'));
+const OperationalInfo = React.lazy(() => import('./OperationalInfo'));
+const FinancialInfo = React.lazy(() => import('./FinancialInfo'));
+const ComplianceInfo = React.lazy(() => import('./ComplianceInfo'));
+const BrandingInfo = React.lazy(() => import('./BrandingInfo'));
 
 
-interface CompanyModalProps {
-    open: boolean;
-    handleClose: () => void;
-    maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-    companyData?: Company | null;
-    refreshList: () => void;
-}
+
 
 const CompanyModal: React.FC<CompanyModalProps> = ({ open, handleClose, refreshList, maxWidth = 'md', companyData }) => {
     const booleanOptions = useMemo(() => [
@@ -71,16 +66,17 @@ const CompanyModal: React.FC<CompanyModalProps> = ({ open, handleClose, refreshL
         about: ""
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-    };
+    }, []);
 
-    const handleChangeArray = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handleChangeArray = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         const arrayValues = value.split(",").map(v => v.trim()).filter(Boolean);
         setFormData(prev => ({ ...prev, [name]: arrayValues }));
-    };
+    }, []);
 
     useEffect(() => {
         if (companyData) {
@@ -211,7 +207,7 @@ const CompanyModal: React.FC<CompanyModalProps> = ({ open, handleClose, refreshL
         });
         handleClose();
     };
-    
+
     return (
         <>
             <CustomModal
@@ -236,14 +232,14 @@ const CompanyModal: React.FC<CompanyModalProps> = ({ open, handleClose, refreshL
                     </>
                 }
                 content={
-                    <>
+                    <Suspense fallback={<CircularProgress />}>
                         <BasicInfo formData={formData} setFormData={setFormData} companyOptions={companyOptions} handleChange={handleChange} />
                         <ContactInfo formData={formData} handleChange={handleChange} />
                         <OperationalInfo formData={formData} handleChange={handleChange} handleChangeArray={handleChangeArray} />
                         <FinancialInfo formData={formData} setFormData={setFormData} booleanOptions={booleanOptions} handleChange={handleChange} />
                         <ComplianceInfo formData={formData} setFormData={setFormData} statusOptions={statusOptions} handleChange={handleChange} handleChangeArray={handleChangeArray} />
                         <BrandingInfo formData={formData} handleChange={handleChange} handleChangeArray={handleChangeArray} />
-                    </>
+                    </Suspense>
                 }
             />
         </>

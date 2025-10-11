@@ -11,6 +11,7 @@ interface Props {
 }
 
 const BrandingInfo: React.FC<Props> = ({ formData, handleChange, handleChangeArray }) => {
+    console.log("child rendering !")
     return (
         <>
             <Grid container spacing={2}>

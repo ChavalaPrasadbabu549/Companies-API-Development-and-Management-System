@@ -11,7 +11,6 @@ interface Props {
 }
 
 const BasicInfo: React.FC<Props> = ({ formData, setFormData, companyOptions, handleChange }) => {
-
     return (
         <>
             <Grid container spacing={2}>

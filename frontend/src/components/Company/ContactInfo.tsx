@@ -11,7 +11,9 @@ interface Props {
 const ContactInfo: React.FC<Props> = ({ formData, handleChange }) => {
     const emailIcon = useMemo(() => <Email />, []);
     const phoneIcon = useMemo(() => <Phone />, []);
-    
+
+    console.log("child rendering !")
+
     return (
         <>
             <Grid container spacing={2}>
