@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Edit, PersonAdd, Visibility } from "@mui/icons-material";
 import CustomTable from "./components/CustomTable";
@@ -9,6 +8,7 @@ import axios from "axios";
 import CustomButton from "./components/CustomButton";
 import type { Company, TableColumn } from "./types/Type";
 import Navbar from "./components/Navbar";
+import TranslatedText from "./components/TranslatedText.js";
 
 const Columns: TableColumn[] = [
   { label: "S No", field: "sno", width: "50px", textAlign: "left" },
@@ -113,7 +113,6 @@ function App() {
     [companies, EditIcon, ViewIcon, handleEdit]
   );
 
-
   return (
     <>
       <Navbar />
@@ -121,12 +120,8 @@ function App() {
         <Box sx={containerStyles}>
           <Box sx={headerBox}>
             <Box>
-              <Typography variant="h5" gutterBottom>
-                Company Management
-              </Typography>
-              <Typography variant="body1" >
-                Manage registered companies. Add, update, or remove details like name, registration number, industry, and contacts.
-              </Typography>
+              <TranslatedText text="Welcome to our dashboard!" variant="h5" />
+              <TranslatedText text="Manage registered companies. Add, update, or remove details like name, registration number, industry, and contacts." variant="body1" />
             </Box>
             <Box>
               <CustomButton

@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip } from '@mui/material'
 import type { CustomTableProps, TableAction } from '../types/Type';
+import TranslatedText from './TranslatedText';
 
 
 const CustomTable: React.FC<CustomTableProps> = React.memo(({ columns, rows, rowsPerPageOptions = [5, 10, 25] }) => {
@@ -27,7 +28,7 @@ const CustomTable: React.FC<CustomTableProps> = React.memo(({ columns, rows, row
                                     key={index}
                                     sx={{ width: col.width, textAlign: col.textAlign }}
                                 >
-                                    {col.label}
+                                    <TranslatedText text={col.label} />
                                 </TableCell>
                             ))}
                         </TableRow>
@@ -50,7 +51,7 @@ const CustomTable: React.FC<CustomTableProps> = React.memo(({ columns, rows, row
                                                     ))}
                                                 </Box>
                                             ) : (
-                                                row[col.field]
+                                                <TranslatedText text={String(row[col.field])} />
                                             )}
                                         </TableCell>
                                     ))}
@@ -59,7 +60,7 @@ const CustomTable: React.FC<CustomTableProps> = React.memo(({ columns, rows, row
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} align="center">
-                                    No data available
+                                    <TranslatedText text="No data available" />
                                 </TableCell>
                             </TableRow>
                         )}
